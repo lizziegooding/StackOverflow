@@ -1,0 +1,19 @@
+/* Sandbox for Mapbox-Directions-Event-Fire */
+body { margin:0; padding:0; }
+#map { position:absolute; top:0; bottom:0; width:100%; }
+.my-icon {
+  border-radius: 100%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  color: white;
+}
+
+.icon-dc {
+background: #3ca0d3;
+}
+
+.icon-sf {
+background: #63b6e5;
+}
