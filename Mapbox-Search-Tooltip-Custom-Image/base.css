@@ -1,0 +1,21 @@
+/* Sandbox for Mapbox-Search-Tooltip-Custom-Image */
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+.search-field {
+  position: absolute;
+  right: 0;
+  bottom: 15px;
+  width: 250px;
+  height: 30px;
+  font-size: 12px;
+  text-align: left;
+  padding: 5px;
+  z-index: 100;
+}
