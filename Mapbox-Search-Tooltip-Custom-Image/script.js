@@ -86,6 +86,10 @@ myLayer.on('layeradd', function(e) {
   marker.setIcon(L.icon(feature.properties.icon));
   var content = '<h2>' + feature.properties.title + '</h2><p>' + feature.properties.description + '</p>';
   marker.bindPopup(content);
+  myLayer.eachLayer(function(m) {
+    m.openPopup();
+  });
+
 });
 
 myLayer.setGeoJSON(geojson);
@@ -95,18 +99,15 @@ $('#searchByName').keyup(cityMapSearch);
 
 function cityMapSearch() {
   var searchString = $('#searchByName').val().toLowerCase();
-  myLayer.setFilter(showCity);
-
-  function showCity(feature) {
-    if (feature.properties.cityName == searchString) {
+  myLayer.setFilter(function (feature) {
+    // console.log(feature);
+    if (feature.properties.cityName === searchString) {
       map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
-      myLayer.openPopup();
+      return true;
     } else {
       return feature.properties.cityName
         .toLowerCase()
         .indexOf(searchString) !== -1;
     }
-    return true;
-  }
-
+  });
 }
