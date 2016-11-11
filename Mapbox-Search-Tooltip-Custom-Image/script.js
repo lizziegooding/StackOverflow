@@ -77,6 +77,8 @@ var geojson = {
   ]
 };
 
+// var markers = [];
+
 //Create an empty feature layer
 var myLayer = L.mapbox.featureLayer()
 //When new layer is added to the map, add custom tooltips and set the custom icon
@@ -88,11 +90,19 @@ var myLayer = L.mapbox.featureLayer()
     feature = marker.feature;
   marker.setIcon(L.icon(feature.properties.icon));
   marker.bindPopup(feature.properties.cityName);
+  // markers = marker;
+  // this.eachLayer(function(marker) {markers.push(marker); });
 })
 //Populate feature layer with geojson data
 .setGeoJSON(geojson)
 //Add feature layer to the map
 .addTo(map);
+
+// map.featureLayer.on('ready', function(e){
+//   var markers = [];
+//   this.eachLayer(function(marker) {markers.push(marker); });
+//   // console.log(markers);
+// });
 
 $('#search').keyup(search);
 
@@ -102,13 +112,37 @@ function search() {
     // get the value of the search input field
   var searchString = $('#search').val().toLowerCase();
   myLayer.setFilter(function(feature){
+    if (feature.properties.cityName === searchString) {
+      map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
+      console.log(feature);
+      // return true;
+      // cycle(markers);
+      myLayer.openPopup();
+    }
+
     //return features whose city name is contained within the search string
     return feature.properties.cityName
       .toLowerCase()
       .indexOf(searchString) !== -1;
   });
-};
+}
 
+// map.featureLayer.on('ready', function(e) {
+  // map.featureLayer.eachLayer(function(layer) {
+  //   layer.openPopup();
+  // });
+// });
+
+function cycle(markers) {
+  var i = 0;
+  function run() {
+    if (++i > markers.length - 1) i = 0;
+    map.setView(markers[i].getLatLng(), 12);
+    markers[i].openPopup();
+    window.setTimeout(run, 3000);
+  }
+  run();
+}
 //Add an empty feature layer to the map
 // var myLayer = L.mapbox.featureLayer().addTo(map);
 //
