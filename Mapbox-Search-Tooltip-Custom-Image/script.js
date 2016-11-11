@@ -10,7 +10,8 @@ var map = L.mapbox.map('map', 'mapbox.streets')
 //Commented out duplicate code
 // var myLayer = L.mapbox.featureLayer().addTo(map);
 
-var geojson = {
+//Define and add GeoJSON data
+var marker = L.mapbox.featureLayer({
   type: 'FeatureCollection',
   features: [{
     type: 'Feature',
@@ -75,39 +76,66 @@ var geojson = {
       }
     }
   ]
+}).addTo(map);
+
+//Add custom tooltips and set the custom icon
+marker.eachLayer(function(layer){
+  layer.bindPopup(layer.feature.properties.cityName);
+  layer.setIcon(L.icon(layer.feature.properties.icon));
+});
+
+$('#search').keyup(search);
+
+// Compare the 'cityName' property of each marker
+// to the search string, seeing whether the former contains the latter.
+function search() {
+    // get the value of the search input field
+  searchString = $('#search').val().toLowerCase();
+  marker.setFilter(function(feature){
+    //return features whose city name is contained within the search string
+    return feature.properties.cityName
+      .toLowerCase()
+      .indexOf(searchString) !== -1;
+  });
 };
 
 //Add an empty feature layer to the map
-var myLayer = L.mapbox.featureLayer().addTo(map);
+// var myLayer = L.mapbox.featureLayer().addTo(map);
+//
+// myLayer.on('layeradd', function(e) {
+//   var marker = e.layer,
+//     feature = marker.feature;
+//   marker.setIcon(L.icon(feature.properties.icon));
+//   var content = '<h2>' + feature.properties.title + '</h2><p>' + feature.properties.description + '</p>';
+//   marker.bindPopup(content);
+//   console.log(marker);
+  // marker.eachLayer(function(layer) {
+  //   layer.openPopup();
+  // });
+// });
 
-myLayer.on('layeradd', function(e) {
-  var marker = e.layer,
-    feature = marker.feature;
-  marker.setIcon(L.icon(feature.properties.icon));
-  var content = '<h2>' + feature.properties.title + '</h2><p>' + feature.properties.description + '</p>';
-  marker.bindPopup(content);
-  myLayer.eachLayer(function(m) {
-    m.openPopup();
-  });
-
-});
-
-myLayer.setGeoJSON(geojson);
+// myLayer.setGeoJSON(geojson);
+// myLayer.eachLayer(function(m) {
+//   m.openPopup();
+// });
 
 // Search by city name
-$('#searchByName').keyup(cityMapSearch);
+// $('#searchByName').keyup(cityMapSearch);
+// myLayer.eachLayer(function(m) {
+//   m.openPopup();
+// });
 
-function cityMapSearch() {
-  var searchString = $('#searchByName').val().toLowerCase();
-  myLayer.setFilter(function (feature) {
-    // console.log(feature);
-    if (feature.properties.cityName === searchString) {
-      map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
-      return true;
-    } else {
-      return feature.properties.cityName
-        .toLowerCase()
-        .indexOf(searchString) !== -1;
-    }
-  });
-}
+// function cityMapSearch() {
+//   var searchString = $('#searchByName').val().toLowerCase();
+//   myLayer.setFilter(function (feature) {
+//     // console.log(feature);
+//     if (feature.properties.cityName === searchString) {
+//       map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
+//       return true;
+//     } else {
+//       return feature.properties.cityName
+//         .toLowerCase()
+//         .indexOf(searchString) !== -1;
+//     }
+//   });
+// }
