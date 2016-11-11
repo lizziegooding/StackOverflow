@@ -4,14 +4,13 @@
 */
 
 L.mapbox.accessToken = 'pk.eyJ1IjoibmFkaiIsImEiOiJjaW43a2hyOXYwMDJrd29semd6bmZha2JuIn0.nE1hjNjGG2rlxm_oMrysyg';
+
+//Create map object, set base tiles and view
 var map = L.mapbox.map('map', 'mapbox.streets')
   .setView([38.13455657705411, -94.5703125], 4);
 
-//Commented out duplicate code
-// var myLayer = L.mapbox.featureLayer().addTo(map);
-
-//Define and add GeoJSON data
-var marker = L.mapbox.featureLayer({
+//Define GeoJSON data
+var geojson = {
   type: 'FeatureCollection',
   features: [{
     type: 'Feature',
@@ -76,13 +75,24 @@ var marker = L.mapbox.featureLayer({
       }
     }
   ]
-}).addTo(map);
+};
 
-//Add custom tooltips and set the custom icon
-marker.eachLayer(function(layer){
-  layer.bindPopup(layer.feature.properties.cityName);
-  layer.setIcon(L.icon(layer.feature.properties.icon));
-});
+//Create an empty feature layer
+var myLayer = L.mapbox.featureLayer()
+//When new layer is added to the map, add custom tooltips and set the custom icon
+//In this case, e is the layer that was added (LayerEvent)
+.on('layeradd', function(e) {
+  //Marker is the layer with the 3 point features
+  var marker = e.layer,
+  //Feature is each of the point features individually
+    feature = marker.feature;
+  marker.setIcon(L.icon(feature.properties.icon));
+  marker.bindPopup(feature.properties.cityName);
+})
+//Populate feature layer with geojson data
+.setGeoJSON(geojson)
+//Add feature layer to the map
+.addTo(map);
 
 $('#search').keyup(search);
 
@@ -90,8 +100,8 @@ $('#search').keyup(search);
 // to the search string, seeing whether the former contains the latter.
 function search() {
     // get the value of the search input field
-  searchString = $('#search').val().toLowerCase();
-  marker.setFilter(function(feature){
+  var searchString = $('#search').val().toLowerCase();
+  myLayer.setFilter(function(feature){
     //return features whose city name is contained within the search string
     return feature.properties.cityName
       .toLowerCase()
