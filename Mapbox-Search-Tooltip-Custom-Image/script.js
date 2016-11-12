@@ -92,6 +92,10 @@ var myLayer = L.mapbox.featureLayer()
   marker.bindPopup(feature.properties.cityName);
   // markers = marker;
   // this.eachLayer(function(marker) {markers.push(marker); });
+  var markers = [];
+  this.eachLayer(function(marker) { markers.push(marker); });
+  cycle(markers);
+
 })
 //Populate feature layer with geojson data
 .setGeoJSON(geojson)
@@ -104,7 +108,7 @@ var myLayer = L.mapbox.featureLayer()
 //   // console.log(markers);
 // });
 
-$('#search').keyup(search);
+// $('#search').keyup(search);
 
 // Compare the 'cityName' property of each marker
 // to the search string, seeing whether the former contains the latter.
@@ -133,6 +137,12 @@ function search() {
   // });
 // });
 
+map.featureLayer.on('ready', function(e) {
+  var markers = [];
+  this.eachLayer(function(marker) { markers.push(marker); });
+  cycle(markers);
+});
+
 function cycle(markers) {
   var i = 0;
   function run() {
@@ -142,8 +152,7 @@ function cycle(markers) {
     window.setTimeout(run, 3000);
   }
   run();
-}
-//Add an empty feature layer to the map
+}//Add an empty feature layer to the map
 // var myLayer = L.mapbox.featureLayer().addTo(map);
 //
 // myLayer.on('layeradd', function(e) {
