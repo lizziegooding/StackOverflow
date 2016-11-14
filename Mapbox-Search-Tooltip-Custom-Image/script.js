@@ -1,6 +1,7 @@
 /* Goal: When full match between search string and feature:
 1. Open tooltip of matched marker
 2. Change the matched marker's custom image
+See post at https://stackoverflow.com/questions/39517234/mapbox-search-open-popup-tooltip-and-change-the-custom-marker-image/40597404#40597404
 */
 
 L.mapbox.accessToken = 'pk.eyJ1IjoibmFkaiIsImEiOiJjaW43a2hyOXYwMDJrd29semd6bmZha2JuIn0.nE1hjNjGG2rlxm_oMrysyg';
@@ -20,7 +21,6 @@ var geojson = {
     properties: {
       id: 1,
       'title': 'Washington, D.C.',
-      'description': 'In the District of Columbia',
       'cityName': 'washington',
       'icon': {
         'iconUrl': 'https://www.mapbox.com/mapbox.js/assets/images/astronaut2.png',
@@ -41,7 +41,6 @@ var geojson = {
       properties: {
         id: 2,
         'title': 'Chicago, M',
-        'description': 'In Illinois',
         'cityName': 'chicago',
         'icon': {
           'iconUrl': 'https://www.mapbox.com/mapbox.js/assets/images/astronaut2.png',
@@ -62,7 +61,6 @@ var geojson = {
       properties: {
         id: 3,
         'title': 'Dallas, T',
-        'description': 'In Texas',
         'cityName': 'dallas',
         'icon': {
           'iconUrl': 'https://www.mapbox.com/mapbox.js/assets/images/astronaut2.png',
@@ -80,11 +78,13 @@ var geojson = {
   ]
 };
 
-//Set layer icons populate myLayer with geojson data
+//Set layer icons, create custom tooltips, populate myLayer with geojson data
 myLayer.on('layeradd', function(e) {
   var marker = e.layer,
     feature = marker.feature;
   marker.setIcon(L.icon(feature.properties.icon));
+  var content = '<h2>' + feature.properties.title + '</h2><p>' + feature.properties.cityName + '</p>';
+  marker.bindPopup(content);
 });
 myLayer.setGeoJSON(geojson);
 
