@@ -80,23 +80,6 @@ var geojson = {
 //Simplest way to add geojson to map-- don't worry about styling for now
 var myLayer = L.mapbox.featureLayer().setGeoJSON(geojson).addTo(map);
 
-var markers = [];
-
-myLayer.eachLayer(function(feature){
-  markers.push(feature);
-  //When marker is clicked, zoom and center on marker. Popup will open automatically
-  feature.on('click', function(e){
-    console.log('feature clicked');
-    // map.setView([feature.feature.geometry.coordinates[1], feature.feature.geometry.coordinates[0]], 17);
-  });
-});
-
-map.on('click', function(e){
-  console.log('map clicked');
-});
-
-console.log(markers);
-
 /*****************
 
 //Create an empty feature layer
@@ -131,148 +114,30 @@ map.on('ready', function(e) {
 
 *****************/
 
-function clickButton(searchString) {
-  console.log('clickButton triggered');
-  // var searchString = $('#search').val().toLowerCase();
+// Compare the 'cityName' property of each marker to the search string, seeing whether the former contains the latter.
+function search() {
+  //Get the value of the search input field
+  var searchString = $('#search').val().toLowerCase();
+
+  //Set filter needs to be declared first
+  myLayer.setFilter(function(feature){
+    //Return features whose city name contains the search string
+    return feature.properties.cityName
+      .toLowerCase()
+      .indexOf(searchString) !== -1;
+  });
+
+  //Loop through each layer
   myLayer.eachLayer(function(marker) {
-      // You can replace this test for anything else, to choose the right
-      // marker on which to open a popup. by default, popups are exclusive
-      // so opening a new one will close all of the others.
+    //If user search input matches the feature's city name
     if (marker.feature.properties.cityName === searchString) {
-      console.log('click button if statement');
-      // map.setView([marker.feature.geometry.coordinates[1], marker.feature.geometry.coordinates[0]], 17);
+      //Zoom in and center on matching feature
+      map.setView([marker.feature.geometry.coordinates[1], marker.feature.geometry.coordinates[0]], 17);
+      //Open feature popup
       marker.openPopup();
     }
   });
 }
 
-function clickMarker(i) {
-  var popup = L.popup()
-  .setLatLng(i)
-  .setContent('content here or html format')
-  .openOn(map);
-  // var popupContent = ,
-  //   popup = new L.Popup({offset:new L.Point(0,-28)});
-  //
-  // popup.setLatLng(i);
-  // popup.setContent(popupContent);
-  // // map.panTo(LatLng);
-  // map.openPopup(popup);
-}
-
-// map.featureLayer.on('ready', function(e){
-// var markers = [];
-// myLayer.eachLayer(function(marker) {markers.push(marker); });
-// console.log(markers);
-// });
-
+//Event listener for user keyup within search field
 $('#search').keyup(search);
-
-// Compare the 'cityName' property of each marker
-// to the search string, seeing whether the former contains the latter.
-function search() {
-    // get the value of the search input field
-  var searchString = $('#search').val().toLowerCase();
-  // myLayer.eachLayer(function(feature) {
-  //   if (feature.feature.properties.cityName === searchString) {
-  //     console.log('If statement true');
-  //     feature.openPopup();
-  //     map.setView([feature.feature.geometry.coordinates[1], feature.feature.geometry.coordinates[0]], 17);
-  //   }
-  // });
-  myLayer.setFilter(function(feature){
-    // if (feature.properties.cityName === searchString){
-    //   // markers[0].openPopup();
-    //   return true;
-    // }
-
-          // map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
-      // console.log(feature);
-      // // return true;
-      // // cycle(markers);
-      // myLayer.openPopup();
-    //return features whose city name is contained within the search string
-    return feature.properties.cityName
-      .toLowerCase()
-      .indexOf(searchString) !== -1;
-  });
-  for (var i = 0; i < markers.length; i++){
-    if (markers[i].feature.properties.cityName === searchString) {
-      console.log('If statement true');
-      var coords = L.latLng(markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]);
-      map.setView(coords, 17);
-      // clickMarker([markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]]);
-      // markers[i].openPopup();
-      clickButton(markers[i].feature.properties.cityName);
-      // map.fireEvent('click', {
-      //   latlng: coords,
-      //   layerPoint: map.latLngToLayerPoint(coords),
-      //   containerPoint: map.latLngToContainerPoint(coords)
-      // });
-    }
-  }
-
-}
-
-// map.featureLayer.on('ready', function(e) {
-  // map.featureLayer.eachLayer(function(layer) {
-  //   layer.openPopup();
-  // });
-// });
-
-// map.featureLayer.on('ready', function(e) {
-//   var markers = [];
-//   this.eachLayer(function(marker) { markers.push(marker); });
-//   cycle(markers);
-// });
-
-// function cycle(markers) {
-//   var i = 0;
-//   function run() {
-//     if (++i > markers.length - 1) i = 0;
-//     map.setView(markers[i].getLatLng(), 17);
-//     markers[i].openPopup();
-//     window.setTimeout(run, 3000);
-//   }
-//   run();
-// }
-//Add an empty feature layer to the map
-// var myLayer = L.mapbox.featureLayer().addTo(map);
-//
-// myLayer.on('layeradd', function(e) {
-//   var marker = e.layer,
-//     feature = marker.feature;
-//   marker.setIcon(L.icon(feature.properties.icon));
-//   var content = '<h2>' + feature.properties.title + '</h2><p>' + feature.properties.description + '</p>';
-//   marker.bindPopup(content);
-//   console.log(marker);
-  // marker.eachLayer(function(layer) {
-  //   layer.openPopup();
-  // });
-// });
-
-// myLayer.setGeoJSON(geojson);
-// myLayer.eachLayer(function(m) {
-//   m.openPopup();
-// });
-
-// Search by city name
-// $('#searchByName').keyup(cityMapSearch);
-// myLayer.eachLayer(function(m) {
-//   m.openPopup();
-// });
-
-// function cityMapSearch() {
-//   var searchString = $('#searchByName').val().toLowerCase();
-//   myLayer.setFilter(function (feature) {
-//     // console.log(feature);
-//     if (feature.properties.cityName === searchString) {
-//       map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
-//       return true;
-//     } else {
-//       return feature.properties.cityName
-//         .toLowerCase()
-//         .indexOf(searchString) !== -1;
-//     }
-//   });
-// }
