@@ -132,13 +132,15 @@ map.on('ready', function(e) {
 *****************/
 
 function clickButton(searchString) {
+  console.log('clickButton triggered');
   // var searchString = $('#search').val().toLowerCase();
   myLayer.eachLayer(function(marker) {
       // You can replace this test for anything else, to choose the right
       // marker on which to open a popup. by default, popups are exclusive
       // so opening a new one will close all of the others.
     if (marker.feature.properties.cityName === searchString) {
-      map.setView([marker.feature.geometry.coordinates[1], marker.feature.geometry.coordinates[0]], 17);
+      console.log('click button if statement');
+      // map.setView([marker.feature.geometry.coordinates[1], marker.feature.geometry.coordinates[0]], 17);
       marker.openPopup();
     }
   });
@@ -197,10 +199,16 @@ function search() {
   for (var i = 0; i < markers.length; i++){
     if (markers[i].feature.properties.cityName === searchString) {
       console.log('If statement true');
-      map.setView([markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]], 17);
-      clickMarker([markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]]);
+      var coords = L.latLng(markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]);
+      map.setView(coords, 17);
+      // clickMarker([markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]]);
       // markers[i].openPopup();
-      // map.fireEvent('click', {latlng:[markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]]});
+      clickButton(markers[i].feature.properties.cityName);
+      // map.fireEvent('click', {
+      //   latlng: coords,
+      //   layerPoint: map.latLngToLayerPoint(coords),
+      //   containerPoint: map.latLngToContainerPoint(coords)
+      // });
     }
   }
 
@@ -218,16 +226,17 @@ function search() {
 //   cycle(markers);
 // });
 
-function cycle(markers) {
-  var i = 0;
-  function run() {
-    if (++i > markers.length - 1) i = 0;
-    map.setView(markers[i].getLatLng(), 17);
-    markers[i].openPopup();
-    window.setTimeout(run, 3000);
-  }
-  run();
-}//Add an empty feature layer to the map
+// function cycle(markers) {
+//   var i = 0;
+//   function run() {
+//     if (++i > markers.length - 1) i = 0;
+//     map.setView(markers[i].getLatLng(), 17);
+//     markers[i].openPopup();
+//     window.setTimeout(run, 3000);
+//   }
+//   run();
+// }
+//Add an empty feature layer to the map
 // var myLayer = L.mapbox.featureLayer().addTo(map);
 //
 // myLayer.on('layeradd', function(e) {
