@@ -9,6 +9,9 @@ L.mapbox.accessToken = 'pk.eyJ1IjoibmFkaiIsImEiOiJjaW43a2hyOXYwMDJrd29semd6bmZha
 var map = L.mapbox.map('map', 'mapbox.streets')
   .setView([38.13455657705411, -94.5703125], 4);
 
+//Create an empty feature layer and add it to the map
+var myLayer = L.mapbox.featureLayer().addTo(map);
+
 //Define GeoJSON data
 var geojson = {
   type: 'FeatureCollection',
@@ -77,42 +80,13 @@ var geojson = {
   ]
 };
 
-//Simplest way to add geojson to map-- don't worry about styling for now
-var myLayer = L.mapbox.featureLayer().setGeoJSON(geojson).addTo(map);
-
-/*****************
-
-//Create an empty feature layer
-var myLayer = L.mapbox.featureLayer()
-//When new layer is added to the map, add custom tooltips and set the custom icon
-//In this case, e is the layer that was added (LayerEvent)
-//Because of the search functionality, this is code is triggered every time the key up event occurs because of the .setFilter
-.on('layeradd', function(e) {
-  //Marker is the layer with the 3 point features
+//Set layer icons populate myLayer with geojson data
+myLayer.on('layeradd', function(e) {
   var marker = e.layer,
-  //Feature is each of the point features individually
     feature = marker.feature;
   marker.setIcon(L.icon(feature.properties.icon));
-  marker.bindPopup(feature.properties.cityName);
-  // markers = marker;
-  // this.eachLayer(function(marker) {markers.push(marker); });
-  // var markers = [];
-  // console.log('this: ', this);
-  // this.eachLayer(function(marker) { markers.push(marker); });
-})
-//Populate feature layer with geojson data
-.setGeoJSON(geojson)
-//Add feature layer to the map
-.addTo(map);
-
-// Wait until the markers are loaded, so we know that `map.featureLayer.eachLayer`
-// will actually go over each marker.
-map.on('ready', function(e) {
-  $('#open-popup').on('click', clickButton);
-    // document.getElementById('open-popup').onclick = clickButton;
 });
-
-*****************/
+myLayer.setGeoJSON(geojson);
 
 // Compare the 'cityName' property of each marker to the search string, seeing whether the former contains the latter.
 function search() {
@@ -131,6 +105,8 @@ function search() {
   myLayer.eachLayer(function(marker) {
     //If user search input matches the feature's city name
     if (marker.feature.properties.cityName === searchString) {
+      //Update icon url
+      marker.setIcon(L.icon({iconUrl: 'https://www.mapbox.com/jobs/img/astro3.svg'}));
       //Zoom in and center on matching feature
       map.setView([marker.feature.geometry.coordinates[1], marker.feature.geometry.coordinates[0]], 17);
       //Open feature popup
