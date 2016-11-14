@@ -84,10 +84,15 @@ var markers = [];
 
 myLayer.eachLayer(function(feature){
   markers.push(feature);
-  //When marker is clicked, pan to marker. Pop up will open automatically
+  //When marker is clicked, zoom and center on marker. Popup will open automatically
   feature.on('click', function(e){
-    map.setView([feature.feature.geometry.coordinates[1], feature.feature.geometry.coordinates[0]], 17);
+    console.log('feature clicked');
+    // map.setView([feature.feature.geometry.coordinates[1], feature.feature.geometry.coordinates[0]], 17);
   });
+});
+
+map.on('click', function(e){
+  console.log('map clicked');
 });
 
 console.log(markers);
@@ -139,13 +144,27 @@ function clickButton(searchString) {
   });
 }
 
+function clickMarker(i) {
+  var popup = L.popup()
+  .setLatLng(i)
+  .setContent('content here or html format')
+  .openOn(map);
+  // var popupContent = ,
+  //   popup = new L.Popup({offset:new L.Point(0,-28)});
+  //
+  // popup.setLatLng(i);
+  // popup.setContent(popupContent);
+  // // map.panTo(LatLng);
+  // map.openPopup(popup);
+}
+
 // map.featureLayer.on('ready', function(e){
 // var markers = [];
 // myLayer.eachLayer(function(marker) {markers.push(marker); });
 // console.log(markers);
 // });
 
-// $('#search').keyup(search);
+$('#search').keyup(search);
 
 // Compare the 'cityName' property of each marker
 // to the search string, seeing whether the former contains the latter.
@@ -153,17 +172,17 @@ function search() {
     // get the value of the search input field
   var searchString = $('#search').val().toLowerCase();
   // myLayer.eachLayer(function(feature) {
-  //   console.log('feature: ', feature);
-  //   if (feature.properties.cityName === searchString) {
-  //     cycle(markers);
+  //   if (feature.feature.properties.cityName === searchString) {
+  //     console.log('If statement true');
+  //     feature.openPopup();
+  //     map.setView([feature.feature.geometry.coordinates[1], feature.feature.geometry.coordinates[0]], 17);
   //   }
+  // });
   myLayer.setFilter(function(feature){
-    if (feature.properties.cityName === searchString){
-      console.log('If statement true');
-      // markers[0].openPopup();
-      // return true;
-      clickButton(searchString);
-    }
+    // if (feature.properties.cityName === searchString){
+    //   // markers[0].openPopup();
+    //   return true;
+    // }
 
           // map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
       // console.log(feature);
@@ -175,6 +194,16 @@ function search() {
       .toLowerCase()
       .indexOf(searchString) !== -1;
   });
+  for (var i = 0; i < markers.length; i++){
+    if (markers[i].feature.properties.cityName === searchString) {
+      console.log('If statement true');
+      map.setView([markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]], 17);
+      clickMarker([markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]]);
+      // markers[i].openPopup();
+      // map.fireEvent('click', {latlng:[markers[i].feature.geometry.coordinates[1], markers[i].feature.geometry.coordinates[0]]});
+    }
+  }
+
 }
 
 // map.featureLayer.on('ready', function(e) {
