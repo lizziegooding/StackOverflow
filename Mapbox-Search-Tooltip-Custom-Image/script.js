@@ -104,7 +104,8 @@ var myLayer = L.mapbox.featureLayer()
 // Wait until the markers are loaded, so we know that `map.featureLayer.eachLayer`
 // will actually go over each marker.
 map.on('ready', function(e) {
-  document.getElementById('open-popup').onclick = clickButton;
+  $('#open-popup').on('click', clickButton);
+    // document.getElementById('open-popup').onclick = clickButton;
 });
 
 function clickButton() {
@@ -126,21 +127,25 @@ function clickButton() {
 //   // console.log(markers);
 // });
 
-// $('#search').keyup(search);
+$('#search').keyup(search);
 
 // Compare the 'cityName' property of each marker
 // to the search string, seeing whether the former contains the latter.
 function search() {
     // get the value of the search input field
   var searchString = $('#search').val().toLowerCase();
-  myLayer.eachLayer(function(feature) {
-    console.log('feature: ', feature);
-    if (feature.properties.cityName === searchString) {
-      cycle(markers);
-    }
-  });
+  // myLayer.eachLayer(function(feature) {
+  //   console.log('feature: ', feature);
+  //   if (feature.properties.cityName === searchString) {
+  //     cycle(markers);
+  //   }
+  // if (myLayer.feature.properties.cityName === searchString){
+  //   $('#open-popup').click();
+  //   // return true;
+  // }
+
   myLayer.setFilter(function(feature){
-      // map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
+          // map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
       // console.log(feature);
       // // return true;
       // // cycle(markers);
