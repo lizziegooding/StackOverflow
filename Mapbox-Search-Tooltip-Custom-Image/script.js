@@ -77,12 +77,17 @@ var geojson = {
   ]
 };
 
-var markers = [];
+//Simplest way to add geojson to map-- don't worry about styling for now
+var myLayer = L.mapbox.featureLayer().setGeoJSON(geojson).addTo(map);
+// var markers = [];
+
+/*****************
 
 //Create an empty feature layer
 var myLayer = L.mapbox.featureLayer()
 //When new layer is added to the map, add custom tooltips and set the custom icon
 //In this case, e is the layer that was added (LayerEvent)
+//Because of the search functionality, this is code is triggered every time the key up event occurs because of the .setFilter
 .on('layeradd', function(e) {
   //Marker is the layer with the 3 point features
   var marker = e.layer,
@@ -94,7 +99,7 @@ var myLayer = L.mapbox.featureLayer()
   // this.eachLayer(function(marker) {markers.push(marker); });
   // var markers = [];
   // console.log('this: ', this);
-  this.eachLayer(function(marker) { markers.push(marker); });
+  // this.eachLayer(function(marker) { markers.push(marker); });
 })
 //Populate feature layer with geojson data
 .setGeoJSON(geojson)
@@ -108,8 +113,10 @@ map.on('ready', function(e) {
     // document.getElementById('open-popup').onclick = clickButton;
 });
 
-function clickButton() {
-  var searchString = $('#search').val().toLowerCase();
+*****************/
+
+function clickButton(searchString) {
+  // var searchString = $('#search').val().toLowerCase();
   myLayer.eachLayer(function(marker) {
       // You can replace this test for anything else, to choose the right
       // marker on which to open a popup. by default, popups are exclusive
@@ -122,9 +129,9 @@ function clickButton() {
 }
 
 // map.featureLayer.on('ready', function(e){
-//   var markers = [];
-//   this.eachLayer(function(marker) {markers.push(marker); });
-//   // console.log(markers);
+var markers = [];
+myLayer.eachLayer(function(marker) {markers.push(marker); });
+console.log(markers);
 // });
 
 $('#search').keyup(search);
@@ -139,12 +146,14 @@ function search() {
   //   if (feature.properties.cityName === searchString) {
   //     cycle(markers);
   //   }
-  // if (myLayer.feature.properties.cityName === searchString){
-  //   $('#open-popup').click();
-  //   // return true;
-  // }
-
   myLayer.setFilter(function(feature){
+    if (feature.properties.cityName === searchString){
+      console.log('If statement true');
+      // markers[0].openPopup();
+      // return true;
+      clickButton(searchString);
+    }
+
           // map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 17);
       // console.log(feature);
       // // return true;
