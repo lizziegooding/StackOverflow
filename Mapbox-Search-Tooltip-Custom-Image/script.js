@@ -79,7 +79,18 @@ var geojson = {
 
 //Simplest way to add geojson to map-- don't worry about styling for now
 var myLayer = L.mapbox.featureLayer().setGeoJSON(geojson).addTo(map);
-// var markers = [];
+
+var markers = [];
+
+myLayer.eachLayer(function(feature){
+  markers.push(feature);
+  //When marker is clicked, pan to marker. Pop up will open automatically
+  feature.on('click', function(e){
+    map.setView([feature.feature.geometry.coordinates[1], feature.feature.geometry.coordinates[0]], 17);
+  });
+});
+
+console.log(markers);
 
 /*****************
 
@@ -129,12 +140,12 @@ function clickButton(searchString) {
 }
 
 // map.featureLayer.on('ready', function(e){
-var markers = [];
-myLayer.eachLayer(function(marker) {markers.push(marker); });
-console.log(markers);
+// var markers = [];
+// myLayer.eachLayer(function(marker) {markers.push(marker); });
+// console.log(markers);
 // });
 
-$('#search').keyup(search);
+// $('#search').keyup(search);
 
 // Compare the 'cityName' property of each marker
 // to the search string, seeing whether the former contains the latter.
@@ -172,11 +183,11 @@ function search() {
   // });
 // });
 
-map.featureLayer.on('ready', function(e) {
-  var markers = [];
-  this.eachLayer(function(marker) { markers.push(marker); });
-  cycle(markers);
-});
+// map.featureLayer.on('ready', function(e) {
+//   var markers = [];
+//   this.eachLayer(function(marker) { markers.push(marker); });
+//   cycle(markers);
+// });
 
 function cycle(markers) {
   var i = 0;
